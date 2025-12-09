@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+    Tema base de la aplicación.
+    Cambiamos el "parent" a un tema del sistema que siempre existe para evitar errores de compilación.
+    El estilo real de la app se define en el código de Compose (ui/theme/Theme.kt).
+    -->
+    <style name="Theme.ArteLab" parent="android:Theme.Material.Light.NoActionBar">
+
+        <!-- Mantenemos la configuración de la splash screen que ya tenías -->
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="android:windowSplashScreenBackground">@android:color/white</item>
+
+    </style>
+
+</resources>
