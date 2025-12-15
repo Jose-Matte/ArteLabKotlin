@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- permiso internet y camara-->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- permisos para camara y almacenamiento -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <!-- para Android 12 y anteriores -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <!--Indica que la cámara es opcional -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
+    <!--(en aplication) -->
+    <!--Permite hacer copia de seguridad -->
+    <!--que datos pueden exportarse en backup/restore y en "transferir datos" del asistente -->
+    <!--que inclusión y exclusion para el backup completo -->
+    <!--icono principal de la app (launcher)-->
+    <!--nombre visible de la app (titulo) -->
+    <!--icono redondo para dispositivos y launchers que lo usan. -->
+    <!--Tema global de la app (colores, tipografías, estilos por defecto) -->
+
+
+    <!--(en activity)-->
+    <!--indica si otros apps u OS pueden lanzar esta activity -->
+    <!--pone titulo en la activity -->
+    <!--tema especifico de la activity(estilos y colores) -->
+
+    <!--(en intents(formas de abrirlo))-->
+    <!--marca esta activity como el punto de entrada de la app-->
+    <!--hace que aparezca en el launcher y se pueda abrir desde el icono del home-->
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:theme="@style/Theme.ArteLab">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.ArteLab">
+
+            <intent-filter>
+                <!-- Punto de entrada de la app -->
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+
+        </activity>
+
+        <!-- FileProvider para captura de imagenes con camara -->
+        <!--para compartir archivos vía content:// en vez de file:// -->
+        <!--identificador único del provider debe coincidir exacto con lo que se usara en el codigo -->
+        <!--no permite que otras apps invoquen el provider directamente sin permiso-->
+        <!-- habilita dar permisos temporales (read y write) a URIs específicas con Intents -->
+        <!-- apunta a res/xml/file_paths.xml donde defines que carpetas/paths se exponen -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+</manifest>
