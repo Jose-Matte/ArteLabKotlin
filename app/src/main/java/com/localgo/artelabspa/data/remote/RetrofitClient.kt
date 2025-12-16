@@ -3,6 +3,7 @@ package com.localgo.artelabspa.data.remote
 
 import com.localgo.artelabspa.data.remote.api.ApiService
 import com.localgo.artelabspa.data.remote.api.AvatarApiService
+import com.localgo.artelabspa.data.remote.api.PedidoApiService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import okhttp3.OkHttpClient
@@ -25,6 +26,10 @@ object RetrofitClient {
 
     fun createAvatarApiService(): AvatarApiService {
         return retrofit.create(AvatarApiService::class.java)
+    }
+
+    fun createPedidoApiService(): PedidoApiService {
+        return retrofit.create(PedidoApiService::class.java)
     }
 
 

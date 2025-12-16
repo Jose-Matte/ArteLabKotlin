@@ -12,21 +12,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.localgo.artelabspa.model.CarritoItem
 import com.localgo.artelabspa.model.CarritoUiState
 import com.localgo.artelabspa.viewmodel.CarritoViewModel
+import com.localgo.artelabspa.viewmodel.CarritoViewModelFactory
+import com.localgo.artelabspa.viewmodel.CompraState
 import java.text.NumberFormat
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CarritoScreen(viewModel: CarritoViewModel = viewModel()) {
+fun CarritoScreen(
+    viewModel: CarritoViewModel = viewModel(
+        factory = CarritoViewModelFactory(LocalContext.current)
+    )
+) {
     val uiState by viewModel.uiState.collectAsState()
+    val compraState by viewModel.compraState.collectAsState()
     var showConfirmDialog by remember { mutableStateOf(false) }
-    var showSuccessDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -74,7 +81,8 @@ fun CarritoScreen(viewModel: CarritoViewModel = viewModel()) {
                     // Resumen y botón de compra
                     CartSummary(
                         total = state.total,
-                        onCheckout = { showSuccessDialog = true }
+                        onCheckout = { viewModel.procesarCompra() },
+                        isLoading = compraState is CompraState.Loading
                     )
                 }
             }
@@ -106,30 +114,59 @@ fun CarritoScreen(viewModel: CarritoViewModel = viewModel()) {
     }
 
     // Diálogo de compra exitosa
-    if (showSuccessDialog) {
-        AlertDialog(
-            onDismissRequest = { showSuccessDialog = false },
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.CheckCircle,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(48.dp)
-                )
-            },
-            title = { Text("¡Compra Exitosa!") },
-            text = { Text("Tu pedido ha sido procesado correctamente. Recibirás una confirmación por correo electrónico.") },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        viewModel.procesarCompra()
-                        showSuccessDialog = false
+    when (compraState) {
+        is CompraState.Success -> {
+            AlertDialog(
+                onDismissRequest = { viewModel.resetCompraState() },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(48.dp)
+                    )
+                },
+                title = { Text("¡Compra Exitosa!") },
+                text = { Text((compraState as CompraState.Success).message) },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            viewModel.resetCompraState()
+                        }
+                    ) {
+                        Text("Aceptar")
                     }
-                ) {
-                    Text("Aceptar")
                 }
-            }
-        )
+            )
+        }
+        is CompraState.Error -> {
+            AlertDialog(
+                onDismissRequest = { viewModel.resetCompraState() },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Error,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.size(48.dp)
+                    )
+                },
+                title = { Text("Error en la Compra") },
+                text = { Text((compraState as CompraState.Error).message) },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            viewModel.resetCompraState()
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error
+                        )
+                    ) {
+                        Text("Aceptar")
+                    }
+                }
+            )
+        }
+        else -> { /* No mostrar nada */ }
     }
 }
 
@@ -278,7 +315,8 @@ fun CarritoItemCard(
 @Composable
 fun CartSummary(
     total: Double,
-    onCheckout: () -> Unit
+    onCheckout: () -> Unit,
+    isLoading: Boolean = false
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -317,19 +355,33 @@ fun CartSummary(
                     .height(56.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary
-                )
+                ),
+                enabled = !isLoading
             ) {
-                Icon(
-                    imageVector = Icons.Default.ShoppingCart,
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Finalizar Compra",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Procesando...",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.ShoppingCart,
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Finalizar Compra",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     }

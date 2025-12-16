@@ -11,6 +11,7 @@ import com.localgo.artelabspa.data.local.SessionManager
 import com.localgo.artelabspa.data.model.UserRole
 import com.localgo.artelabspa.ui.navigation.BottomNavBar
 import com.localgo.artelabspa.viewmodel.CarritoViewModel
+import com.localgo.artelabspa.viewmodel.CarritoViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -19,7 +20,9 @@ fun HomeContainer(
 ) {
     val context = LocalContext.current
     val sessionManager = remember { SessionManager(context) }
-    val carritoViewModel: CarritoViewModel = viewModel()
+    val carritoViewModel: CarritoViewModel = viewModel(
+        factory = CarritoViewModelFactory(context)
+    )
 
     val role = remember {
         UserRole.from(sessionManager.getRole())
