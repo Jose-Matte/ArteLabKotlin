@@ -117,7 +117,7 @@ Requisitos previos-->
 - Conexión a Internet (para consumo de APIs)
 
 ## Clonar el repositorio
-git clone https://github.com/Luchopicinini/ArteLabSpa_.git
+git clone https://github.com/Jose-Matte/ArteLabKotlin
 
 ## Abrir el proyecto
 
