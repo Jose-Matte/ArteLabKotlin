@@ -26,7 +26,7 @@ La aplicación utiliza el patrón MVVM (Model – View – ViewModel):
   - Local (SessionManager / Room / DataStore)
 
 
- Estructura del Proyecto
+Estructura del Proyecto
 com.localgo.artelabspa
 │
 ├── data
@@ -43,7 +43,7 @@ com.localgo.artelabspa
 ├── viewmodel → Lógica de negocio
 └── utils → Validaciones y utilidades
 
-  Funcionalidades Implementadas
+ 🧪 Funcionalidades Implementadas
 
 ### Autenticación
 - Login con validación de campos
@@ -79,7 +79,7 @@ Integrado mediante microservicios backend.
 - Pruebas en ViewModel y Utils
 - Uso de JUnit y MockK
 
-##  Tecnologías Utilizadas
+## Tecnologías Utilizadas
 - Kotlin
 - Jetpack Compose
 - Material Design 3
